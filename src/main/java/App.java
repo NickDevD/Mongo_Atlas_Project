@@ -2,6 +2,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
@@ -59,14 +61,25 @@ public class App {
             String choice = in.next();
             switch (choice){
                 case "1":
-                    System.out.println("ID: ");
-                    int id = in.nextInt();
-                    System.out.println("Name: ");
-                    String name = in.next();
-                    Document query = new Document("_id", id).append("name", name);
-                    InsertOneResult result = clientsData.insertOne(query);
-                    break;
+                        System.out.println("ID: ");
+                        int id = in.nextInt();
+                        System.out.println("Name: ");
+                        String name = in.next();
+                        Document query = new Document("_id", id).append("name", name);
+                        InsertOneResult result = clientsData.insertOne(query);
+                        break;
                 case "2":
+                    System.out.println("Delete client by id: ");
+                    int userDeletionId = in.nextInt();
+                    DeleteResult deleteUser = clientsData.deleteOne(Filters.eq("_id", userDeletionId ));
+                case "5":
+                    System.out.println("Search client by id: ");
+                    int searchId = in.nextInt();
+                    Document user = clientsData.find(Filters.eq("_id", searchId)).first();
+                    System.out.println("Name: " + user.toJson());
+                    break;
+
+                case "6":
                     conectado = false;
             }
         }

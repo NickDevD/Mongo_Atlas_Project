@@ -61,17 +61,45 @@ public class App {
             String choice = in.next();
             switch (choice){
                 case "1":
-                        System.out.println("ID: ");
-                        int id = in.nextInt();
-                        System.out.println("Name: ");
-                        String name = in.next();
-                        Document query = new Document("_id", id).append("name", name);
-                        InsertOneResult result = clientsData.insertOne(query);
+                    boolean inputValido = false;
+                    while (!inputValido) {
+                        try {
+                            System.out.println("ID: ");
+                            int id = in.nextInt();
+                            System.out.println("Name: ");
+                            String name = in.next();
+                            Document query = new Document("_id", id).append("name", name);
+                            InsertOneResult result = clientsData.insertOne(query);
+
+                            System.out.println("Documento inserido com sucesso! ID: " + result.getInsertedId());
+                            inputValido = true; // Se a inserção foi bem-sucedida, define a flag como true para sair do loop
+
+                            } catch (Exception e) {
+                                // O erro de duplicidade de chave no MongoDB.
+                                if (e.getMessage() != null) {
+                                    System.out.println("Erro:Por favor, digite novamente");
+                                    // AQUI: inputValido permanece 'false', então o loop 'while' continuará e pedirá um novo ID.
+                                }
+                            }
+                        }
                         break;
                 case "2":
-                    System.out.println("Delete client by id: ");
-                    int userDeletionId = in.nextInt();
-                    DeleteResult deleteUser = clientsData.deleteOne(Filters.eq("_id", userDeletionId ));
+                    boolean inputDelete = false;
+                    while (!inputDelete){
+                        try {
+                            System.out.println("Delete client by id: ");
+                            int userDeletionId = in.nextInt();
+                            DeleteResult deleteUser = clientsData.deleteOne(Filters.eq("_id", userDeletionId ));
+                            inputDelete = true;
+
+                        } catch (Exception e) {
+                            if (e.getMessage() != null) {
+                                System.out.println(e.getMessage());
+                                System.out.println("Erro:Por favor, digite novamente");
+                            }
+                         }
+                    }
+
                 case "5":
                     System.out.println("Search client by id: ");
                     int searchId = in.nextInt();
@@ -83,6 +111,7 @@ public class App {
                     conectado = false;
             }
         }
+        in.close();
 
 
 
